@@ -89,27 +89,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 popup.style.display = 'flex';
                 popup.classList.add('show');
                 document.body.classList.add('vol0-active');
-                // Force repaint
+                // Set background color directly and force repaint
+                document.body.style.backgroundColor = '#333';
+                // Force repaint using a different method for reliability
+                const temp = document.body.style.display;
                 document.body.style.display = 'none';
                 document.body.offsetHeight; // Trigger reflow
-                document.body.style.display = 'flex';
+                document.body.style.display = temp || 'flex';
                 closePopup.focus();
                 vol0Link.dataset.lastFocused = 'true';
             });
         }
     }
-
-    // Bind nav links once
+    
     navLinks.forEach(link => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const href = link.getAttribute('href');
             if (href === '#music' && isMobile()) {
                 document.body.classList.add('vol0-active');
-                // Force repaint
+                // Set background color directly and force repaint
+                document.body.style.backgroundColor = '#333';
+                // Force repaint using a different method for reliability
+                const temp = document.body.style.display;
                 document.body.style.display = 'none';
                 document.body.offsetHeight; // Trigger reflow
-                document.body.style.display = 'flex';
+                document.body.style.display = temp || 'flex';
             }
             updateContent(href);
         });

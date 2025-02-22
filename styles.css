@@ -6,20 +6,23 @@
 }
 
 html {
-    background-color: #333; /* Set fallback for full coverage */
-    height: 100%; /* Ensure html spans the viewport */
+    background-color: rgb(249, 248, 247); /* Default background */
+    height: 100%;
     margin: 0;
     padding: 0;
+    /* Ensure background covers status bar */
+    -webkit-background-size: cover;
+    background-size: cover;
 }
 
 body {
-    background-color: rgb(249, 248, 247); /* Default background */
+    background-color: rgb(249, 248, 247);
     font-family: "graveur-variable", sans-serif;
     font-variation-settings: 'opsz' 10, 'wght' 600;
     min-height: 100dvh;
     margin: 0;
     padding: 0;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease; /* Default transition for desktop */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,7 +30,7 @@ body {
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
-    will-change: background-color; /* Hint to browser for smoother transitions */
+    will-change: background-color;
 }
 
 body.vol0-active {
@@ -368,11 +371,8 @@ nav a:active {
 
 /* Adjust media queries as needed */
 @media (max-width: 768px) {
-    .contact-section {
-        padding: 0 1rem;
-    }
-    .form-group {
-        max-width: 100%;
+    body {
+        transition: none; /* No transition on mobile */
     }
 }
 
