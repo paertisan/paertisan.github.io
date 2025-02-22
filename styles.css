@@ -361,6 +361,7 @@ nav a:active {
             "content"
             "nav";
         grid-template-columns: 1fr;
+        grid-template-rows: auto 100px auto;
         row-gap: 20px;
     }
     .logo {
