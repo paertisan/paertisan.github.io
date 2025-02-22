@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (hash !== '#music' && !popup.classList.contains('show')) {
                 document.body.classList.remove('vol0-active');
                 if (isMobile()) {
-                    updateThemeColor('#ffffff'); // Reset to default (e.g., white) on mobile
+                    updateThemeColor('#f9f8f7'); // Reset to default (e.g., white) on mobile
                 }
             }
             bindVol0Link();
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const href = link.getAttribute('href');
             if (href === '#music' && isMobile()) {
                 document.body.classList.add('vol0-active');
-                updateThemeColor('#6b4e31'); // Change to music-themed color on mobile
+                updateThemeColor('#333'); // Change to music-themed color on mobile
             }
             updateContent(href);
         });
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         updateContent('#home');
         if (isMobile()) {
-            updateThemeColor('#ffffff'); // Reset to default on mobile
+            updateThemeColor('#f9f8f7'); // Reset to default on mobile
         }
     });
 
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             popup.style.display = 'none';
             document.body.classList.remove('vol0-active');
             if (isMobile()) {
-                updateThemeColor('#ffffff'); // Reset to default on mobile
+                updateThemeColor('#f9f8f7'); // Reset to default on mobile
             }
             const lastFocused = document.querySelector('.vol0[data-last-focused="true"]');
             if (lastFocused) {
@@ -178,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const initialHash = window.location.hash || '#home';
     updateContent(initialHash);
     if (isMobile() && initialHash === '#music') {
-        updateThemeColor('#6b4e31');
+        updateThemeColor('#333');
     } else if (isMobile()) {
-        updateThemeColor('#ffffff');
+        updateThemeColor('#f9f8f7');
     }
 });
