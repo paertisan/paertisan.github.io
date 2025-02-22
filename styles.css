@@ -6,13 +6,13 @@
 }
 
 html {
-    background-color: rgb(249, 248, 247); /* Default background */
-    height: 100svh; /* Use small viewport height for full coverage */
+    background-color: rgb(249, 248, 247); /* Default background for entire viewport */
+    height: 100svh; /* Small viewport height for full coverage */
     margin: 0;
     padding: 0;
     -webkit-background-size: cover;
     background-size: cover;
-    /* Ensure background covers safe areas */
+    /* Ensure safe areas are accounted for */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
@@ -20,13 +20,13 @@ html {
 }
 
 body {
-    background-color: rgb(249, 248, 247);
+    background-color: transparent; /* Body is transparent, showing html background */
     font-family: "graveur-variable", sans-serif;
     font-variation-settings: 'opsz' 10, 'wght' 600;
-    min-height: 100svh; /* Use small viewport height for full coverage */
+    min-height: 100svh;
     margin: 0;
     padding: 0;
-    transition: background-color 0.3s ease;
+    transition: none; /* Remove transition since background is on html */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -34,11 +34,23 @@ body {
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
-    will-change: background-color;
 }
 
-body.vol0-active {
+html.vol0-active {
     background-color: #333;
+}
+
+/* Update dependent styles to use html.vol0-active */
+html.vol0-active nav a {
+    color: #ffffff;
+}
+
+html.vol0-active .logo-img {
+    filter: brightness(0) invert(1);
+}
+
+html.vol0-active .vol0 {
+    color: #ffd700;
 }
 
 .website {
@@ -366,10 +378,7 @@ nav a:active {
             "nav";
         grid-template-columns: 1fr;
         row-gap: 20px;
-        padding: clamp(20px, 4vw, 50px) clamp(20px, 4vw, 50px) clamp(20px, 4vw, 50px) clamp(20px, 4vw, 50px);
-    }
-    body {
-        background-color: rgb(249, 248, 247); /* Reaffirm background */
+        padding: clamp(20px, 4vw, 50px);
     }
 }
 
