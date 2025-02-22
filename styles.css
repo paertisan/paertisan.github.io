@@ -6,7 +6,8 @@
 }
 
 html {
-    background-color: rgb(249, 248, 247); /* Default background for entire viewport */
+    background-color: rgb(249, 248, 247);
+    transition: background-color 1s ease;
     height: 100svh; /* Small viewport height for full coverage */
     margin: 0;
     padding: 0;

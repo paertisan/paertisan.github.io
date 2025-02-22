@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const popup = document.getElementById('streaming-popup');
     const closePopup = popup.querySelector('.close-popup');
 
-    // Content for each "page" (unchanged)
+    // Content for each "page"
     const pages = {
         '#home': `
             <div class="block-quote">
@@ -43,12 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
         `
     };
 
-    // Check if device is mobile
+    // Function to check if the device is mobile
     function isMobile() {
         return window.innerWidth <= 768;
     }
 
-    // Update page title
+    // Function to update page title
     function updateTitle(hash) {
         const titles = {
             '#home': 'RWR Music - Home',
@@ -59,24 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.title = titles[hash] || 'RWR Music';
     }
 
-    // Centralize background updates
-    function updateBackground() {
-        const shouldBeActive = (isMobile() && window.location.hash === '#music') || popup.classList.contains('show');
-        if (shouldBeActive) {
-            document.documentElement.classList.add('vol0-active');
-        } else {
-            document.documentElement.classList.remove('vol0-active');
-        }
-        // Trigger reflow on mobile for immediate repaint
-        if (isMobile()) {
-            const temp = document.body.style.display;
-            document.body.style.display = 'none';
-            document.body.offsetHeight; // Force reflow
-            document.body.style.display = temp || 'flex';
-        }
-    }
-
-    // Update content with transition
+    // Function to update content with transition
     function updateContent(hash) {
         if (!pages[hash] && hash !== '#home') {
             console.warn(`Hash ${hash} not found, defaulting to #home`);
@@ -89,13 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 contentArea.classList.remove('content-area--enter');
             }, 300);
+            if (hash !== '#music' && !popup.classList.contains('show')) {
+                document.body.classList.remove('vol0-active');
+            }
             bindVol0Link();
             updateTitle(hash);
-            updateBackground(); // Update background after content change
         }, 300);
     }
 
-    // Bind click event to .vol0
+    // Function to bind click event to .vol0
     function bindVol0Link() {
         const vol0Link = document.querySelector('.vol0');
         if (vol0Link) {
@@ -103,7 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 popup.style.display = 'flex';
                 popup.classList.add('show');
-                updateBackground(); // Update background when popup opens
+                document.body.classList.add('vol0-active');
+                document.body.style.backgroundColor = '#333';
+                const temp = document.body.style.display;
+                document.body.style.display = 'none';
+                document.body.offsetHeight;
+                document.body.style.display = temp || 'flex';
                 closePopup.focus();
                 vol0Link.dataset.lastFocused = 'true';
             });
@@ -115,8 +105,24 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const href = link.getAttribute('href');
+            if (isMobile()) {
+                if (href === '#music') {
+                    document.body.classList.add('vol0-active');
+                    document.body.style.backgroundColor = '#333';
+                    const temp = document.body.style.display;
+                    document.body.style.display = 'none';
+                    document.body.offsetHeight;
+                    document.body.style.display = temp || 'flex';
+                } else if (document.body.classList.contains('vol0-active') && href !== '#music') {
+                    document.body.classList.remove('vol0-active');
+                    document.body.style.backgroundColor = 'rgb(249, 248, 247)';
+                    const temp = document.body.style.display;
+                    document.body.style.display = 'none';
+                    document.body.offsetHeight;
+                    document.body.style.display = temp || 'flex';
+                }
+            }
             updateContent(href);
-            // Background managed by updateBackground()
         });
     });
 
@@ -126,12 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
         updateContent('#home');
     });
 
-    // Close popup
+    // Close popup and revert styles
     closePopup.addEventListener('click', () => {
         popup.classList.remove('show');
         setTimeout(() => {
             popup.style.display = 'none';
-            updateBackground(); // Update background when popup closes
+            document.body.classList.remove('vol0-active');
             const lastFocused = document.querySelector('.vol0[data-last-focused="true"]');
             if (lastFocused) {
                 lastFocused.focus();
@@ -154,13 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handle browser back/forward
+    // Handle browser back/forward buttons
     window.addEventListener('popstate', (event) => {
         updateContent(window.location.hash || '#home');
-        updateBackground();
     });
 
-    // Initial load
+    // Load initial content based on URL hash
     updateContent(window.location.hash || '#home');
-    updateBackground();
 });
