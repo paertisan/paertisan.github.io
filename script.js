@@ -59,6 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.title = titles[hash] || 'RWR Music';
     }
 
+    // Function to update theme color
+    function updateThemeColor(color) {
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', color);
+        } else {
+            // If the meta tag doesn't exist, create it
+            const newMeta = document.createElement('meta');
+            newMeta.name = 'theme-color';
+            newMeta.content = color;
+            document.head.appendChild(newMeta);
+        }
+    }
+
     // Function to update content with transition
     function updateContent(hash) {
         if (!pages[hash] && hash !== '#home') {
@@ -74,6 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300);
             if (hash !== '#music' && !popup.classList.contains('show')) {
                 document.body.classList.remove('vol0-active');
+                if (isMobile()) {
+                    updateThemeColor('#ffffff'); // Reset to default (e.g., white) on mobile
+                }
             }
             bindVol0Link();
             updateTitle(hash);
@@ -102,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const href = link.getAttribute('href');
             if (href === '#music' && isMobile()) {
                 document.body.classList.add('vol0-active');
+                updateThemeColor('#6b4e31'); // Change to music-themed color on mobile
             }
             updateContent(href);
         });
@@ -111,6 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
     logoLink.addEventListener('click', (event) => {
         event.preventDefault();
         updateContent('#home');
+        if (isMobile()) {
+            updateThemeColor('#ffffff'); // Reset to default on mobile
+        }
     });
 
     // Close popup and revert styles
@@ -119,6 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             popup.style.display = 'none';
             document.body.classList.remove('vol0-active');
+            if (isMobile()) {
+                updateThemeColor('#ffffff'); // Reset to default on mobile
+            }
             const lastFocused = document.querySelector('.vol0[data-last-focused="true"]');
             if (lastFocused) {
                 lastFocused.focus();
@@ -144,8 +168,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle browser back/forward buttons
     window.addEventListener('popstate', (event) => {
         updateContent(window.location.hash || '#home');
+        if (isMobile()) {
+            const hash = window.location.hash || '#home';
+            updateThemeColor(hash === '#music' ? '#6b4e31' : '#ffffff');
+        }
     });
 
     // Load initial content based on URL hash
-    updateContent(window.location.hash || '#home');
+    const initialHash = window.location.hash || '#home';
+    updateContent(initialHash);
+    if (isMobile() && initialHash === '#music') {
+        updateThemeColor('#6b4e31');
+    } else if (isMobile()) {
+        updateThemeColor('#ffffff');
+    }
 });
