@@ -89,6 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 popup.style.display = 'flex';
                 popup.classList.add('show');
                 document.body.classList.add('vol0-active');
+                // Force repaint
+                document.body.style.display = 'none';
+                document.body.offsetHeight; // Trigger reflow
+                document.body.style.display = 'flex';
                 closePopup.focus();
                 vol0Link.dataset.lastFocused = 'true';
             });
@@ -102,6 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const href = link.getAttribute('href');
             if (href === '#music' && isMobile()) {
                 document.body.classList.add('vol0-active');
+                // Force repaint
+                document.body.style.display = 'none';
+                document.body.offsetHeight; // Trigger reflow
+                document.body.style.display = 'flex';
             }
             updateContent(href);
         });
