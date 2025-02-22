@@ -89,9 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 popup.style.display = 'flex';
                 popup.classList.add('show');
                 document.body.classList.add('vol0-active');
-                // Set background color directly and force repaint
-                document.body.style.backgroundColor = '#333';
-                // Force repaint using a different method for reliability
+                document.body.style.backgroundColor = '#333'; // Ensure background is set
                 const temp = document.body.style.display;
                 document.body.style.display = 'none';
                 document.body.offsetHeight; // Trigger reflow
@@ -106,15 +104,22 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const href = link.getAttribute('href');
-            if (href === '#music' && isMobile()) {
-                document.body.classList.add('vol0-active');
-                // Set background color directly and force repaint
-                document.body.style.backgroundColor = '#333';
-                // Force repaint using a different method for reliability
-                const temp = document.body.style.display;
-                document.body.style.display = 'none';
-                document.body.offsetHeight; // Trigger reflow
-                document.body.style.display = temp || 'flex';
+            if (isMobile()) {
+                if (href === '#music') {
+                    document.body.classList.add('vol0-active');
+                    document.body.style.backgroundColor = '#333'; // Set active background
+                    const temp = document.body.style.display;
+                    document.body.style.display = 'none';
+                    document.body.offsetHeight; // Trigger reflow
+                    document.body.style.display = temp || 'flex';
+                } else if (document.body.classList.contains('vol0-active') && href !== '#music') {
+                    document.body.classList.remove('vol0-active');
+                    document.body.style.backgroundColor = 'rgb(249, 248, 247)'; // Revert to default
+                    const temp = document.body.style.display;
+                    document.body.style.display = 'none';
+                    document.body.offsetHeight; // Trigger reflow
+                    document.body.style.display = temp || 'flex';
+                }
             }
             updateContent(href);
         });

@@ -7,22 +7,26 @@
 
 html {
     background-color: rgb(249, 248, 247); /* Default background */
-    height: 100%;
+    height: 100svh; /* Use small viewport height for full coverage */
     margin: 0;
     padding: 0;
-    /* Ensure background covers status bar */
     -webkit-background-size: cover;
     background-size: cover;
+    /* Ensure background covers safe areas */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 body {
     background-color: rgb(249, 248, 247);
     font-family: "graveur-variable", sans-serif;
     font-variation-settings: 'opsz' 10, 'wght' 600;
-    min-height: 100dvh;
+    min-height: 100svh; /* Use small viewport height for full coverage */
     margin: 0;
     padding: 0;
-    transition: background-color 0.3s ease; /* Default transition for desktop */
+    transition: background-color 0.3s ease;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -372,7 +376,13 @@ nav a:active {
 /* Adjust media queries as needed */
 @media (max-width: 768px) {
     body {
-        transition: none; /* No transition on mobile */
+        transition: none; /* No transition on mobile to avoid rendering lag */
+    }
+    html, body {
+        background-color: rgb(249, 248, 247); /* Reaffirm default background on mobile */
+    }
+    body.vol0-active {
+        background-color: #333; /* Reaffirm active background on mobile */
     }
 }
 
