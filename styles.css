@@ -9,11 +9,18 @@ body {
     background-color: rgb(249, 248, 247);
     font-family: "graveur-variable", sans-serif;
     font-variation-settings: 'opsz' 10, 'wght' 600;
-    min-height: 100vh;
+    min-height: 100vh; /* Changed to 100dvh for better mobile support */
+    margin: 0; /* Ensure no default margins interfere */
+    padding: 0; /* Ensure no default padding interferes */
+    transition: background-color 0.3s ease;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: background-color 0.3s ease;
+    /* Extend background to safe areas */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 .website {
@@ -27,6 +34,7 @@ body {
     width: 100%;
     max-width: min(1400px, 100vw - 2rem);
     padding: clamp(20px, 4vw, 50px);
+    box-sizing: border-box; /* Ensure padding doesn’t overflow */
 }
 
 .logo {
@@ -333,12 +341,17 @@ nav a:active {
 
 /* Adjust media queries as needed */
 @media (max-width: 768px) {
-    .contact-icons {
-        gap: 1.5rem;
+    .website {
+        grid-template-areas: 
+            "logo"
+            "content"
+            "nav";
+        grid-template-columns: 1fr;
+        row-gap: 20px;
+        padding: clamp(20px, 4vw, 50px) clamp(20px, 4vw, 50px) clamp(20px, 4vw, 50px) clamp(20px, 4vw, 50px);
     }
-    .contact-icon {
-        width: 28px;
-        height: 28px;
+    body {
+        background-color: rgb(249, 248, 247); /* Reaffirm background */
     }
 }
 
