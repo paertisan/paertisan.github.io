@@ -5,53 +5,15 @@
     box-sizing: border-box;
 }
 
-html {
-    background-color: rgb(249, 248, 247);
-    transition: background-color 1s ease;
-    height: 100svh; /* Small viewport height for full coverage */
-    margin: 0;
-    padding: 0;
-    -webkit-background-size: cover;
-    background-size: cover;
-    /* Ensure safe areas are accounted for */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-}
-
 body {
-    background-color: transparent; /* Body is transparent, showing html background */
+    background-color: rgb(249, 248, 247);
     font-family: "graveur-variable", sans-serif;
     font-variation-settings: 'opsz' 10, 'wght' 600;
-    min-height: 100svh;
-    margin: 0;
-    padding: 0;
-    transition: none; /* Remove transition since background is on html */
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-}
-
-html.vol0-active {
-    background-color: #333;
-}
-
-/* Update dependent styles to use html.vol0-active */
-html.vol0-active nav a {
-    color: #ffffff;
-}
-
-html.vol0-active .logo-img {
-    filter: brightness(0) invert(1);
-}
-
-html.vol0-active .vol0 {
-    color: #ffd700;
+    transition: background-color 0.3s ease;
 }
 
 .website {
@@ -65,7 +27,6 @@ html.vol0-active .vol0 {
     width: 100%;
     max-width: min(1400px, 100vw - 2rem);
     padding: clamp(20px, 4vw, 50px);
-    box-sizing: border-box; /* Ensure padding doesn’t overflow */
 }
 
 .logo {
@@ -372,27 +333,22 @@ nav a:active {
 
 /* Adjust media queries as needed */
 @media (max-width: 768px) {
-    .website {
-        grid-template-areas: 
-            "logo"
-            "content"
-            "nav";
-        grid-template-columns: 1fr;
-        row-gap: 20px;
-        padding: clamp(20px, 4vw, 50px);
+    .contact-icons {
+        gap: 1.5rem;
+    }
+    .contact-icon {
+        width: 28px;
+        height: 28px;
     }
 }
 
 /* Adjust media queries as needed */
 @media (max-width: 768px) {
-    body {
-        transition: none; /* No transition on mobile to avoid rendering lag */
+    .contact-section {
+        padding: 0 1rem;
     }
-    html, body {
-        background-color: rgb(249, 248, 247); /* Reaffirm default background on mobile */
-    }
-    body.vol0-active {
-        background-color: #333; /* Reaffirm active background on mobile */
+    .form-group {
+        max-width: 100%;
     }
 }
 

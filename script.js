@@ -89,38 +89,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 popup.style.display = 'flex';
                 popup.classList.add('show');
                 document.body.classList.add('vol0-active');
-                document.body.style.backgroundColor = '#333';
-                const temp = document.body.style.display;
-                document.body.style.display = 'none';
-                document.body.offsetHeight;
-                document.body.style.display = temp || 'flex';
                 closePopup.focus();
                 vol0Link.dataset.lastFocused = 'true';
             });
         }
     }
 
-    // Navigation link clicks
+    // Bind nav links once
     navLinks.forEach(link => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const href = link.getAttribute('href');
-            if (isMobile()) {
-                if (href === '#music') {
-                    document.body.classList.add('vol0-active');
-                    document.body.style.backgroundColor = '#333';
-                    const temp = document.body.style.display;
-                    document.body.style.display = 'none';
-                    document.body.offsetHeight;
-                    document.body.style.display = temp || 'flex';
-                } else if (document.body.classList.contains('vol0-active') && href !== '#music') {
-                    document.body.classList.remove('vol0-active');
-                    document.body.style.backgroundColor = 'rgb(249, 248, 247)';
-                    const temp = document.body.style.display;
-                    document.body.style.display = 'none';
-                    document.body.offsetHeight;
-                    document.body.style.display = temp || 'flex';
-                }
+            if (href === '#music' && isMobile()) {
+                document.body.classList.add('vol0-active');
             }
             updateContent(href);
         });
