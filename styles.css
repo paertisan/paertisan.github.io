@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: rgb(249, 248, 247);
+    background-color: #f9f8f7;
     font-family: "graveur-variable", sans-serif;
     font-variation-settings: 'opsz' 10, 'wght' 600;
     min-height: 100vh;
