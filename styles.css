@@ -6,7 +6,7 @@
 }
 
 html {
-    background-color: rgb(249, 248, 247); /* Set fallback for full coverage */
+    background-color: #333; /* Set fallback for full coverage */
     height: 100%; /* Ensure html spans the viewport */
     margin: 0;
     padding: 0;
