@@ -338,13 +338,19 @@ nav a:active {
     .contact-section {
         padding: 0 1rem;
     }
+    .content-area {
+        max-height: 150px
+    }
+    .content-about {
+        max-width: 90%;
+    }
     .website {
         grid-template-areas: 
             "logo"
             "content"
             "nav";
         grid-template-columns: 1fr;
-        grid-template-rows: auto minmax(100px, auto) auto;
+        grid-template-rows: auto minmax(150px, auto) auto;
         row-gap: 20px;
     }
     .logo {

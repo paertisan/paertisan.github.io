@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>I was born in Springfield, Oregon, and I love music. 
                 I'm drawn to 
                 <span class="highlight">beautiful</span> 
-                sounds that wears their structures on their sleeves.
+                sounds that wear their structures on their sleeves.
                 I'm a 
                 <span class="highlight">composer</span> 
                 and 
