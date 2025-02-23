@@ -16,8 +16,23 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `,
         '#about': `
-            <div class="text-body">
-                Robert is a composer and pianist living in Oregon.
+            <div class="content-about text-body">
+                <p>My name is <span class="highlight">Robert Rust</span>.</p>
+                <p>I was born in Springfield, Oregon, and I love music. 
+                I'm drawn to 
+                <span class="highlight">beautiful</span> 
+                sounds that wears their structures on their sleeves.
+                I'm a 
+                <span class="highlight">composer</span> 
+                and 
+                <span class="highlight">pianist</span>. 
+                I'm a 7th generation 
+                <span class="highlight">Oregonian</span>. 
+                I'm a Christian. 
+                I love the 
+                <span class="highlight">Word</span>, 
+                and even more: I love to share it with people through my 
+                <span class="highlight">music</span>.
             </div>
         `,
         '#music': `
@@ -65,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (metaThemeColor) {
             metaThemeColor.setAttribute('content', color);
         } else {
-            // If the meta tag doesn't exist, create it
             const newMeta = document.createElement('meta');
             newMeta.name = 'theme-color';
             newMeta.content = color;
@@ -89,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (hash !== '#music' && !popup.classList.contains('show')) {
                 document.body.classList.remove('vol0-active');
                 if (isMobile()) {
-                    updateThemeColor('#f9f8f7'); // Reset to default (e.g., white) on mobile
+                    updateThemeColor('#f9f8f7');
                 }
             }
             bindVol0Link();
@@ -119,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const href = link.getAttribute('href');
             if (href === '#music' && isMobile()) {
                 document.body.classList.add('vol0-active');
-                updateThemeColor('#333'); // Change to music-themed color on mobile
+                updateThemeColor('#333');
             }
             updateContent(href);
         });
@@ -130,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         updateContent('#home');
         if (isMobile()) {
-            updateThemeColor('#f9f8f7'); // Reset to default on mobile
+            updateThemeColor('#f9f8f7');
         }
     });
 
@@ -141,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             popup.style.display = 'none';
             document.body.classList.remove('vol0-active');
             if (isMobile()) {
-                updateThemeColor('#f9f8f7'); // Reset to default on mobile
+                updateThemeColor('#f9f8f7');
             }
             const lastFocused = document.querySelector('.vol0[data-last-focused="true"]');
             if (lastFocused) {
@@ -170,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateContent(window.location.hash || '#home');
         if (isMobile()) {
             const hash = window.location.hash || '#home';
-            updateThemeColor(hash === '#music' ? '#6b4e31' : '#ffffff');
+            updateThemeColor(hash === '#music' ? '#333' : '#f9f8f7');
         }
     });
 

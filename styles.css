@@ -51,14 +51,13 @@ body {
 
 .content-area {
     grid-area: content;
-    display: grid;
-    grid-template-areas: 
-        "quote"
-        "quote"
-        "quote";
-    place-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     opacity: 1;
-    transition: opacity 0.3s ease;
+    max-height: 30vh;
+    overflow-y: hidden; /* Default: no scrolling unless specified */
 }
 
 .content-area--exit {
@@ -74,11 +73,17 @@ body {
     to { opacity: 1; }
 }
 
+.content-about {
+    overflow-y: auto; /* Enables scrolling only for About page content */
+    max-height: 100%; /* Ensures it fits within content-area */
+    width: 100%;
+    padding: 20px;
+}
+
 .block-quote {
-    grid-area: quote;
     font-family: "graveur-variable", sans-serif;
     font-variation-settings: 'opsz' 36, 'wght' 300;
-    font-size: clamp(24px, 5vw, 72px);
+    font-size: clamp(24px, 3.5vw, 68px);
     position: relative;
     max-width: 90%;
     text-align: center;
@@ -91,18 +96,22 @@ body {
 }
 
 .text-body {
-    grid-area: quote;
     font-family: "graveur-variable", sans-serif;
     font-variation-settings: 'opsz' 36, 'wght' 300;
-    font-size: clamp(20px, 4vw, 56px);
-    padding-left: clamp(0px, 10vw, 100px);
-    text-align: center;
+    font-size: 20px;
+    text-align: justify;
     max-width: 90%;
     line-height: 1.5;
 }
 
-.music-links {
-    grid-area: quote;
+.cta-text {
+    font-family: "graveur-variable", sans-serif;
+    font-variation-settings: 'opsz' 36, 'wght' 300;
+    font-size: clamp(20px, 2vw, 26px);
+    color: #d6301e;
+    text-align: center;
+    max-width: 90%;
+    line-height: 1.5;
 }
 
 .vol0 {
@@ -113,6 +122,7 @@ body {
     font-size: clamp(24px, 3vw, 36px);
     color: #333;
     transition: color 0.3s ease, transform 0.2s ease;
+    justify-self: center;
 }
 
 /* Hover and active states for Vol. 0 */
@@ -176,11 +186,6 @@ nav a:hover {
 
 nav a:active {
     transform: scale(1.05);
-}
-
-.nav-placeholder {
-    visibility: hidden;
-    pointer-events: none;
 }
 
 /* Popup styles */
@@ -274,7 +279,6 @@ nav a:active {
 }
 
 /* Contact Section */
-
 .contact-section {
     display: flex;
     flex-direction: column;
@@ -316,29 +320,16 @@ nav a:active {
         width: 28px;
         height: 28px;
     }
-}
-
-/* Adjust media queries as needed */
-@media (max-width: 768px) {
     .contact-section {
         padding: 0 1rem;
     }
-    .form-group {
-        max-width: 100%;
-    }
-    
-}
-
-/* Simplified Media Queries */
-/* Mobile (up to 768px) */
-@media (max-width: 768px) {
     .website {
         grid-template-areas: 
             "logo"
             "content"
             "nav";
         grid-template-columns: 1fr;
-        grid-template-rows: auto 100px auto;
+        grid-template-rows: auto minmax(100px, auto) auto;
         row-gap: 20px;
     }
     .logo {
