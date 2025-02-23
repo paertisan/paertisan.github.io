@@ -16,9 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `,
         '#about': `
-            <div class="text-body">
-                Robert is a composer and pianist living in Oregon.
-            </div>
+            <div id="about-carousel"></div>
         `,
         '#music': `
             <div class="music-links">
@@ -43,6 +41,82 @@ document.addEventListener('DOMContentLoaded', () => {
         `
     };
 
+    // React Components for the About Carousel
+    const Card = ({ title, content }) => (
+        React.createElement(
+            'div',
+            { className: 'card' },
+            React.createElement('h2', null, title),
+            React.createElement('p', null, content)
+        )
+    );
+
+    const Carousel = ({ children }) => {
+        const [active, setActive] = React.useState(1); // Start with middle card active
+        const count = React.Children.count(children);
+
+        return React.createElement(
+            'div',
+            { className: 'carousel' },
+            active > 0 &&
+                React.createElement(
+                    'button',
+                    {
+                        className: 'nav left',
+                        onClick: () => setActive(i => i - 1),
+                    },
+                    React.createElement(TiChevronLeftOutline)
+                ),
+            React.Children.map(children, (child, i) =>
+                React.createElement(
+                    'div',
+                    {
+                        className: 'card-container',
+                        style: {
+                            '--active': i === active ? 1 : 0,
+                            '--offset': (active - i) / 3,
+                            '--direction': Math.sign(active - i),
+                            '--abs-offset': Math.abs(active - i) / 3,
+                            pointerEvents: i === active ? 'auto' : 'none',
+                            opacity: Math.abs(active - i) >= 3 ? '0' : '1',
+                            display: Math.abs(active - i) > 3 ? 'none' : 'block'
+                        }
+                    },
+                    child
+                )
+            ),
+            active < count - 1 &&
+                React.createElement(
+                    'button',
+                    {
+                        className: 'nav right',
+                        onClick: () => setActive(i => i + 1),
+                    },
+                    React.createElement(TiChevronRightOutline)
+                )
+        );
+    };
+
+    const AboutCarousel = () => {
+        const cardData = [
+            { title: 'Composer & Pianist', content: 'I am a composer and pianist based in Oregon.' },
+            { title: 'Musical Style', content: 'My music blends classical and contemporary styles.' },
+            { title: 'Projects', content: 'I’ve contributed to various film and multimedia projects.' }
+        ];
+
+        return React.createElement(
+            Carousel,
+            null,
+            cardData.map((data, i) =>
+                React.createElement(Card, {
+                    key: i,
+                    title: data.title,
+                    content: data.content
+                })
+            )
+        );
+    };
+
     // Function to check if the device is mobile
     function isMobile() {
         return window.innerWidth <= 768;
@@ -65,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (metaThemeColor) {
             metaThemeColor.setAttribute('content', color);
         } else {
-            // If the meta tag doesn't exist, create it
             const newMeta = document.createElement('meta');
             newMeta.name = 'theme-color';
             newMeta.content = color;
@@ -81,6 +154,12 @@ document.addEventListener('DOMContentLoaded', () => {
         contentArea.classList.add('content-area--exit');
         setTimeout(() => {
             contentArea.innerHTML = pages[hash] || pages['#home'];
+            if (hash === '#about') {
+                ReactDOM.render(
+                    React.createElement(AboutCarousel),
+                    document.getElementById('about-carousel')
+                );
+            }
             contentArea.classList.remove('content-area--exit');
             contentArea.classList.add('content-area--enter');
             setTimeout(() => {
@@ -89,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (hash !== '#music' && !popup.classList.contains('show')) {
                 document.body.classList.remove('vol0-active');
                 if (isMobile()) {
-                    updateThemeColor('#f9f8f7'); // Reset to default (e.g., white) on mobile
+                    updateThemeColor('#f9f8f7');
                 }
             }
             bindVol0Link();
@@ -119,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const href = link.getAttribute('href');
             if (href === '#music' && isMobile()) {
                 document.body.classList.add('vol0-active');
-                updateThemeColor('#333'); // Change to music-themed color on mobile
+                updateThemeColor('#333');
             }
             updateContent(href);
         });
@@ -130,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         updateContent('#home');
         if (isMobile()) {
-            updateThemeColor('#f9f8f7'); // Reset to default on mobile
+            updateThemeColor('#f9f8f7');
         }
     });
 
@@ -141,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
             popup.style.display = 'none';
             document.body.classList.remove('vol0-active');
             if (isMobile()) {
-                updateThemeColor('#f9f8f7'); // Reset to default on mobile
+                updateThemeColor('#f9f8f7');
             }
             const lastFocused = document.querySelector('.vol0[data-last-focused="true"]');
             if (lastFocused) {
@@ -170,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateContent(window.location.hash || '#home');
         if (isMobile()) {
             const hash = window.location.hash || '#home';
-            updateThemeColor(hash === '#music' ? '#6b4e31' : '#ffffff');
+            updateThemeColor(hash === '#music' ? '#333' : '#f9f8f7');
         }
     });
 
