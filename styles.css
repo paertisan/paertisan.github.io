@@ -74,15 +74,6 @@ body {
     to { opacity: 1; }
 }
 
-.jump-to-nav {
-    display: none;
-    text-align: center;
-    font-size: 14px;
-    color: #333;
-    text-decoration: underline;
-    padding: 10px 0;
-}
-
 .block-quote {
     grid-area: quote;
     font-family: "graveur-variable", sans-serif;
@@ -93,20 +84,6 @@ body {
     text-align: center;
     word-wrap: break-word;
     line-height: 1.5;
-}
-
-.block-quote::before {
-    content: "“";
-    position: absolute;
-    left: -30px;
-    top: 0;
-}
-
-.block-quote::after {
-    content: "”";
-    position: absolute;
-    right: -30px;
-    bottom: 0;
 }
 
 .highlight {
@@ -142,7 +119,6 @@ body {
 .vol0:hover,
 .vol0-active {
     color: #ffd700;
-    transform: translateY(-10px);
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -350,6 +326,7 @@ nav a:active {
     .form-group {
         max-width: 100%;
     }
+    
 }
 
 /* Simplified Media Queries */
@@ -390,9 +367,6 @@ nav a:active {
     .close-popup {
         padding: 12px 24px;
         font-size: 1.2rem;
-    }
-    .jump-to-nav {
-        display: block;
     }
 }
 

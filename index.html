@@ -40,9 +40,9 @@
     </script>
   </head>
   <body>
-    <div class="website">
-      <div class="logo" role="banner">
-        <a href="#home" class="logo-link">
+    <main class="website">
+      <header class="logo" role="banner">
+        <a href="#home" class="logo-link" aria-label="RWR Music Home">
           <img
             src="/assets/rwrlogo.svg"
             alt="RWR Music Logo"
@@ -50,24 +50,24 @@
             loading="lazy"
           />
         </a>
-      </div>
-      <nav role="navigation" id="navigation">
+      </header>
+      <nav role="navigation" id="navigation" aria-label="Main navigation">
         <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#music">Music</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="#home" aria-label="Home">Home</a></li>
+          <li><a href="#about" aria-label="About">About</a></li>
+          <li><a href="#music" aria-label="Music">Music</a></li>
+          <li><a href="#contact" aria-label="Contact">Contact</a></li>
         </ul>
       </nav>
-      <div class="content-area" role="main">
+      <section class="content-area" role="main">
         <div class="block-quote">
           <i>
             The <span class="highlight">Word</span> is my
             <span class="highlight">music</span>
           </i>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
     <div
       class="popup"
       id="streaming-popup"
