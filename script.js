@@ -41,7 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `,
         '#contact': `
-            <div class="text-body contact-section">
+            <div class="contact-section">
+                <h2><i>If you want to get in touch, DM me on 𝕏, or send me an email!</i></h2>
+                <p>info [at] rwrmusic [dot] com</p>
                 <div class="contact-icons">
                     <a href="https://x.com/rwalterrust" target="_blank" rel="noopener noreferrer" class="contact-link" aria-label="Follow on X">
                         <svg viewBox="0 0 24 24" width="32" height="32" class="contact-icon">
