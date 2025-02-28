@@ -4,6 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoLink = document.querySelector('.logo-link');
     const popup = document.getElementById('streaming-popup');
     const closePopup = popup.querySelector('.close-popup');
+    const logo = document.querySelector('.logo');
+    const nav = document.querySelector('nav');
+
+    // Cache the current height
+    let currentContentHeight = 0;
 
     // Content for each "page"
     const pages = {
@@ -89,28 +94,85 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to update content with transition
+    // Function to adjust layout smoothly (for resize or initial load)
+    function adjustLayout() {
+        contentArea.style.height = 'auto';
+        const newContentHeight = contentArea.scrollHeight;
+
+        if (isMobile()) {
+            contentArea.style.height = `${currentContentHeight}px`;
+            contentArea.offsetHeight; // Force reflow
+            contentArea.style.height = `${newContentHeight}px`;
+            // No transforms needed; row-gap handles spacing
+        } else {
+            contentArea.style.height = 'auto';
+        }
+        currentContentHeight = newContentHeight;
+    }
+
+    // Function to update content with smooth height transition
     function updateContent(hash) {
         if (!pages[hash] && hash !== '#home') {
             console.warn(`Hash ${hash} not found, defaulting to #home`);
         }
+
+        // Start fade-out transition
         contentArea.classList.add('content-area--exit');
+
         setTimeout(() => {
+            // Lock the current height before changing content
+            contentArea.style.height = `${currentContentHeight}px`;
+
+            // Update content
             contentArea.innerHTML = pages[hash] || pages['#home'];
-            contentArea.classList.remove('content-area--exit');
-            contentArea.classList.add('content-area--enter');
-            setTimeout(() => {
-                contentArea.classList.remove('content-area--enter');
-            }, 300);
+
+            // Calculate true new height by temporarily unsetting height
+            contentArea.style.height = 'auto';
+            const newContentHeight = contentArea.scrollHeight;
+
+            // Set back to current height and transition to new height
+            contentArea.style.height = `${currentContentHeight}px`;
+            contentArea.offsetHeight; // Force reflow
+
+            requestAnimationFrame(() => {
+                contentArea.style.height = `${newContentHeight}px`;
+
+                // No transforms needed; row-gap handles spacing
+                if (isMobile()) {
+                    logo.style.transform = 'none';
+                    nav.style.transform = 'none';
+                } else {
+                    logo.style.transform = 'none';
+                    nav.style.transform = 'none';
+                }
+
+                // Update cached height
+                currentContentHeight = newContentHeight;
+
+                // Fade in the new content
+                contentArea.classList.remove('content-area--exit');
+                contentArea.classList.add('content-area--enter');
+
+                setTimeout(() => {
+                    contentArea.classList.remove('content-area--enter');
+                    if (!isMobile()) {
+                        contentArea.style.height = 'auto';
+                    }
+                }, 300);
+            });
+
+            // Handle body class and theme color
             if (hash !== '#music' && !popup.classList.contains('show')) {
                 document.body.classList.remove('vol0-active');
                 if (isMobile()) {
                     updateThemeColor('#f9f8f7');
                 }
+            } else if (hash === '#music' && isMobile()) {
+                updateThemeColor('#333');
             }
             bindVol0Link();
             updateTitle(hash);
-        }, 300);
+        }, 300); // Match transition duration
     }
 
     // Function to bind click event to .vol0
@@ -190,9 +252,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handle window resize to adjust layout dynamically
+    window.addEventListener('resize', adjustLayout);
+
     // Load initial content based on URL hash
     const initialHash = window.location.hash || '#home';
-    updateContent(initialHash);
+    contentArea.innerHTML = pages[initialHash] || pages['#home'];
+    currentContentHeight = contentArea.scrollHeight; // Cache initial height
+    contentArea.style.height = `${currentContentHeight}px`; // Set initial height explicitly
+    adjustLayout(); // Apply initial layout
     if (isMobile() && initialHash === '#music') {
         updateThemeColor('#333');
     } else if (isMobile()) {

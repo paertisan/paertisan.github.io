@@ -33,6 +33,8 @@ body {
     grid-area: logo;
     place-self: center;
     flex-shrink: 0;
+    transition: transform 0.3s ease; /* Smooth sliding */
+    position: relative;
 }
 
 .logo-link {
@@ -56,11 +58,10 @@ body {
     align-items: center;
     justify-content: center;
     opacity: 1;
-    max-height: 30vh;
-    overflow-y: hidden;
-    box-sizing: border-box;
-    opacity: 1;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, height 0.3s ease;
+    min-height: 0;
+    width: 100%;
+    height: 0;
 }
 
 .content-area--exit {
@@ -80,16 +81,6 @@ body {
     to { opacity: 1; }
 }
 
-.content-about {
-    overflow-y: scroll;
-    max-height: 100%;
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
-}
-
 .block-quote {
     font-family: "graveur-variable", sans-serif;
     font-variation-settings: 'opsz' 36, 'wght' 300;
@@ -103,15 +94,6 @@ body {
 
 .highlight {
     color: #d6301e;
-}
-
-.text-body {
-    font-family: "graveur-variable", sans-serif;
-    font-variation-settings: 'opsz' 36, 'wght' 300;
-    font-size: 20px;
-    text-align: justify;
-    max-width: 90%;
-    line-height: 1.5;
 }
 
 .text-body {
@@ -143,7 +125,7 @@ body {
 
 /* Desktop hover behavior for Vol. 0 */
 body:has(.vol0:hover) nav a {
-    color: #ffffff;
+    color: #f9f8f7;
 }
 body:has(.vol0:hover) .logo-img {
     filter: brightness(0) invert(1);
@@ -154,7 +136,7 @@ body:has(.vol0:hover) {
 
 /* Mobile click and desktop popup behavior */
 body.vol0-active nav a {
-    color: #ffffff;
+    color: #f9f8f7;
 }
 body.vol0-active .logo-img {
     filter: brightness(0) invert(1);
@@ -170,6 +152,8 @@ nav {
     grid-area: nav;
     align-self: center;
     width: 100%;
+    transition: transform 0.3s ease; /* Smooth sliding */
+    position: relative;
 }
 
 nav ul {
@@ -219,7 +203,7 @@ nav a:active {
 }
 
 .popup-content {
-    background-color: #fff;
+    background-color: #f9f8f7;
     padding-inline: clamp(20px, 5vw, 100px);
     padding-block: clamp(20px, 5vw, 50px);
     border-radius: 10px;
@@ -260,7 +244,7 @@ nav a:active {
 }
 
 .album-link-box:hover {
-    background-color: #f0f0e9;
+    background-color: #f9f8f7;
 }
 
 .popup-content a {
@@ -328,36 +312,20 @@ nav a:active {
 
 /* Adjust media queries as needed */
 @media (max-width: 768px) {
-    .contact-icons {
-        gap: 1.5rem;
-    }
-    .contact-icon {
-        width: 28px;
-        height: 28px;
-    }
-    .contact-section {
-        padding: 0 1rem;
-    }
-    .content-area {
-        max-height: 150px
-    }
-    .content-about {
-        max-width: 90%;
-    }
     .website {
         grid-template-areas: 
             "logo"
             "content"
             "nav";
         grid-template-columns: 1fr;
-        grid-template-rows: auto minmax(150px, auto) auto;
-        row-gap: 20px;
+        grid-template-rows: auto auto auto;
+        row-gap: 50px;
     }
     .logo {
-        padding-bottom: 20px;
+        padding-bottom: 0;
     }
     nav {
-        padding-top: 20px;
+        padding-top: 0;
     }
     nav ul {
         gap: 1.5rem;
@@ -367,32 +335,27 @@ nav a:active {
         font-size: 24px;
     }
     .text-body {
-        padding-left: 0;
         padding: 0 1rem;
-    }
-    .popup-content {
-        width: 90vw;
-        height: auto;
-        max-height: 90vh;
-        overflow-y: auto;
-    }
-    .close-popup {
-        padding: 12px 24px;
-        font-size: 1.2rem;
     }
 }
 
 /* Tablet and small desktops (769px to 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
-    .website {
-        grid-template-columns: auto auto 1fr;
-        max-width: 900px;
-    }
     .logo-img {
         width: 300px;
     }
     nav a {
         font-size: 32px;
+    }
+}
+
+@media (min-width: 769px) {
+    .website {
+        grid-template-areas: 
+            "logo nav content"
+            "logo nav content"
+            "logo nav content";
+        grid-template-columns: auto auto 1fr;
     }
 }
 
