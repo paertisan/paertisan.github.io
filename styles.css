@@ -394,7 +394,7 @@ nav a:active {
         padding-top: 0;
     }
     nav ul {
-        gap: 1.5rem;
+        gap: 0.5rem;
         align-items: center;
     }
     nav a {
@@ -404,7 +404,8 @@ nav a:active {
         padding: 0 1rem;
     }
     .content-area {
-        padding-block: 40px;
+        padding-top: 40px;
+        padding-bottom: 20px;
     }
     .carousel-container {
         max-width: 80%;
