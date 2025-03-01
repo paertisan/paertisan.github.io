@@ -344,7 +344,7 @@ nav a:active {
 
 .carousel-image {
     width: 100%;
-    max-width: 180px;
+    max-width: 225px;
     border-radius: 10px;
     height: auto;
     filter: blur(5px);

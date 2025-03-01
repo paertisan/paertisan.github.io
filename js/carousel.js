@@ -8,9 +8,6 @@ export function initCarousel(elements, showPopup) {
   let startX = 0,
     currentX = 0,
     isDragging = false;
-  let startTime = 0,
-    lastX = 0,
-    velocity = 0;
 
   if (!track || !items.length || !dotsContainer) {
     console.warn("Carousel elements not found");
@@ -76,12 +73,13 @@ export function initCarousel(elements, showPopup) {
   }
 
   function handleStart(e) {
-    isDragging = true;
+    isDragging = false; // Reset initially
     startX = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
-    lastX = startX;
-    startTime = performance.now();
+    currentX = startX;
     track.style.transition = "none";
-    e.preventDefault(); // Prevent page scrolling
+    if (e.type === "mousedown") {
+      isDragging = true; // Only set for mouse if button is pressed
+    }
   }
 
   function handleMove(e) {
@@ -93,58 +91,68 @@ export function initCarousel(elements, showPopup) {
     ).offsetWidth;
     const currentOffset = -currentIndex * containerWidth;
 
-    // Update velocity (pixels per millisecond)
-    const timeDelta = performance.now() - startTime;
-    if (timeDelta > 0) {
-      velocity = (currentX - lastX) / timeDelta;
+    // Apply threshold for touch devices only
+    if (e.type.includes("touch") && Math.abs(diff) > 10) {
+      isDragging = true;
+      e.preventDefault(); // Prevent scrolling on touch devices during swipe
+      requestAnimationFrame(() => {
+        track.style.transform = `translateX(${currentOffset + diff}px)`;
+      });
+    } else if (e.type === "mousemove") {
+      // Only move if initiated by mousedown
+      requestAnimationFrame(() => {
+        track.style.transform = `translateX(${currentOffset + diff}px)`;
+      });
     }
-    lastX = currentX;
-    startTime = performance.now();
-
-    requestAnimationFrame(() => {
-      track.style.transform = `translateX(${currentOffset + diff}px)`;
-    });
-    e.preventDefault(); // Prevent page scrolling
   }
 
   function handleEnd(e) {
-    if (!isDragging) return;
-    isDragging = false;
-    track.style.transition = "transform 0.5s ease-out"; // Easing for momentum
-    const diff = currentX - startX;
-    const containerWidth = contentArea.querySelector(
-      ".carousel-container"
-    ).offsetWidth;
-    const swipeThreshold =
-      Math.abs(velocity) > 0.5 ? containerWidth / 8 : containerWidth / 4; // Velocity-based threshold
-
-    if (Math.abs(diff) > swipeThreshold) {
-      if (diff < 0 && currentIndex < items.length - 1) {
-        currentIndex++;
-      } else if (diff > 0 && currentIndex > 0) {
-        currentIndex--;
-      }
-    } else {
-      // Apply momentum based on velocity
-      const momentum = velocity * 200; // Adjust multiplier for feel
-      const newOffset = -currentIndex * containerWidth + momentum;
-      const maxOffset = 0;
-      const minOffset = -(items.length - 1) * containerWidth;
-
-      if (newOffset > maxOffset) {
-        currentIndex = 0;
-      } else if (newOffset < minOffset) {
-        currentIndex = items.length - 1;
+    if (e.type === "touchend") {
+      if (!isDragging) {
+        // Treat as a tap on mobile
+        const tappedItem = e.target.closest(".carousel-item");
+        if (tappedItem) {
+          currentIndex = parseInt(tappedItem.getAttribute("data-index"));
+          updateCarousel();
+          showPopup(tappedItem);
+        }
       } else {
-        currentIndex = Math.round(-newOffset / containerWidth);
+        // Handle swipe completion on mobile
+        track.style.transition = "transform 0.5s ease";
+        const diff = currentX - startX;
+        const containerWidth = contentArea.querySelector(
+          ".carousel-container"
+        ).offsetWidth;
+        if (Math.abs(diff) > containerWidth / 4) {
+          if (diff < 0 && currentIndex < items.length - 1) {
+            currentIndex++;
+          } else if (diff > 0 && currentIndex > 0) {
+            currentIndex--;
+          }
+        }
+        updateCarousel();
       }
+    } else if (e.type === "mouseup" && isDragging) {
+      // Handle mouse drag completion on desktop
+      track.style.transition = "transform 0.5s ease";
+      const diff = currentX - startX;
+      const containerWidth = contentArea.querySelector(
+        ".carousel-container"
+      ).offsetWidth;
+      if (Math.abs(diff) > containerWidth / 4) {
+        if (diff < 0 && currentIndex < items.length - 1) {
+          currentIndex++;
+        } else if (diff > 0 && currentIndex > 0) {
+          currentIndex--;
+        }
+      }
+      updateCarousel();
     }
-    updateCarousel();
-    e.preventDefault(); // Prevent page scrolling
+    isDragging = false; // Reset after every interaction
   }
 
   // Bind touch/mouse events for swiping
-  track.addEventListener("touchstart", handleStart, { passive: false });
+  track.addEventListener("touchstart", handleStart);
   track.addEventListener("touchmove", handleMove, { passive: false });
   track.addEventListener("touchend", handleEnd);
   track.addEventListener("mousedown", handleStart);
@@ -152,7 +160,7 @@ export function initCarousel(elements, showPopup) {
   track.addEventListener("mouseup", handleEnd);
   track.addEventListener("mouseleave", handleEnd);
 
-  // Handle item clicks to open popup
+  // Handle item clicks or taps (for desktop and fallback)
   items.forEach((item) => {
     item.addEventListener("click", (e) => {
       if (isDragging) return;
