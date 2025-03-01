@@ -23,6 +23,7 @@ export const pages = {
   "#music": `
     <div class="music-carousel">
       <div class="carousel-container">
+        <div class="carousel-prev"></div>
         <div class="carousel-track">
           <a href="#" class="carousel-item active" data-index="0" data-title="Vol. 0" data-type="album" data-asset="/assets/vol0-cover.png" data-spotify="https://open.spotify.com/album/0WfLbvhHHCECRfAMwyAjzD" data-applemusic="https://music.apple.com/us/album/vol-0/1790153891" data-youtubemusic="https://music.youtube.com/playlist?list=OLAK5uy_k5R_yKTcS0hHuu4Rkb29F_l1sn80Eplso" data-amazonmusic="https://music.amazon.com/albums/B0DSVVSLHM" data-tidal="https://listen.tidal.com/album/411252419">
             <img src="/assets/vol0-cover.png" alt="Vol. 0 Album Cover" class="carousel-image">
@@ -37,6 +38,7 @@ export const pages = {
             <img src="/assets/willyou-cover.png" alt="Will You... Album Cover" class="carousel-image">
           </a>
         </div>
+        <div class="carousel-next"></div>
       </div>
       <div class="carousel-dots"></div>
     </div>

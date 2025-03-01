@@ -1,42 +1,68 @@
 // js/main.js
-import { updateContent, adjustLayout, pages } from './content.js';
-import { isMobile, updateThemeColor } from './utils.js';
-import { bindEventListeners } from './eventListeners.js';
-import { initCarousel } from './carousel.js';
-import { initPopup } from './popup.js';
+import { updateContent, adjustLayout, pages } from "./content.js";
+import { isMobile, updateThemeColor } from "./utils.js";
+import { bindEventListeners } from "./eventListeners.js";
+import { initCarousel } from "./carousel.js";
+import { initPopup } from "./popup.js";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   const elements = {
-    contentArea: document.querySelector('.content-area'),
-    navLinks: document.querySelectorAll('nav a'),
-    logoLink: document.querySelector('.logo-link'),
-    popup: document.getElementById('carousel-popup'),
-    closePopup: document.querySelector('.close-popup'),
-    popupTitle: document.querySelector('#popup-title'),
-    popupBody: document.querySelector('#popup-body'),
-    logo: document.querySelector('.logo'),
-    nav: document.querySelector('nav'),
+    contentArea: document.querySelector(".content-area"),
+    navLinks: document.querySelectorAll("nav a"),
+    logoLink: document.querySelector(".logo-link"),
+    popup: document.getElementById("carousel-popup"),
+    closePopup: document.querySelector(".close-popup"),
+    popupTitle: document.querySelector("#popup-title"),
+    popupBody: document.querySelector("#popup-body"),
+    logo: document.querySelector(".logo"),
+    nav: document.querySelector("nav"),
   };
 
   const state = { currentContentHeight: 0 };
 
   // Initial content load
-  const initialHash = window.location.hash || '#home';
-  elements.contentArea.innerHTML = pages[initialHash] || pages['#home'];
+  const initialHash = window.location.hash || "#home";
+  elements.contentArea.innerHTML = pages[initialHash] || pages["#home"];
   state.currentContentHeight = elements.contentArea.scrollHeight;
   elements.contentArea.style.height = `${state.currentContentHeight}px`;
 
   // Bind event listeners
-  bindEventListeners(elements, state, updateContent, adjustLayout, isMobile, updateThemeColor);
+  bindEventListeners(
+    elements,
+    state,
+    updateContent,
+    adjustLayout,
+    isMobile,
+    updateThemeColor
+  );
 
   // Adjust layout and initialize carousel if needed
   adjustLayout(elements, state, isMobile);
-  if (initialHash === '#music') {
+  if (initialHash === "#music") {
     const showPopup = initPopup(elements);
     initCarousel(elements, showPopup);
   }
 
   if (isMobile()) {
-    updateThemeColor('#f9f8f7');
+    updateThemeColor("#f9f8f7");
   }
 });
+
+// Preload carousel images
+const preloadImages = [
+  "/assets/vol0-cover.png",
+  "/assets/rivers-of-bblon-cover.png",
+  "/assets/tsns-cover.png",
+  "/assets/willyou-cover.png",
+  // Add your image paths here
+];
+
+function preload() {
+  preloadImages.forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
+}
+
+// Run on page load
+window.addEventListener("load", preload);

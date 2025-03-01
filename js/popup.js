@@ -2,6 +2,17 @@
 export function initPopup(elements) {
   const { popup, popupTitle, popupBody, closePopup } = elements;
 
+  // Function to pause the video
+  function pauseVideo() {
+    const iframe = popupBody.querySelector("iframe");
+    if (iframe) {
+      iframe.contentWindow.postMessage(
+        '{"event":"command","func":"pauseVideo","args":""}',
+        "*"
+      );
+    }
+  }
+
   return function showPopup(item) {
     const type = item.getAttribute("data-type");
     const title = item.getAttribute("data-title");
@@ -92,7 +103,6 @@ export function initPopup(elements) {
           <a href="${tidal}" target="_blank" rel="noopener noreferrer">TIDAL</a>
         </div>
       `;
-      document.body.classList.add("vol0-active");
     } else if (type === "video") {
       const youtubeId = item.getAttribute("data-youtube-id");
       popupTitle.textContent = `${title} - Video`;
@@ -102,7 +112,30 @@ export function initPopup(elements) {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen></iframe>
       `;
-      document.body.classList.remove("vol0-active");
+      // Store a reference to the iframe for later use
+      const iframe = popupBody.querySelector("iframe");
+      // Add an event listener to pause the video when the popup is closed
+      const pauseVideoOnClose = () => {
+        if (iframe) {
+          iframe.contentWindow.postMessage(
+            '{"event":"command","func":"pauseVideo","args":""}',
+            "*"
+          );
+        }
+      };
+      // Attach the pause logic to the close button
+      closePopup.addEventListener("click", pauseVideoOnClose);
+      // Also pause video on outside click or Escape key (handled in eventListeners.js)
+      popup.addEventListener("click", (e) => {
+        if (e.target === popup) {
+          pauseVideoOnClose();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && popup.classList.contains("show")) {
+          pauseVideoOnClose();
+        }
+      });
     }
 
     popup.style.display = "flex";

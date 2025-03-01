@@ -4,6 +4,8 @@ export function initCarousel(elements, showPopup) {
   const track = contentArea.querySelector(".carousel-track");
   const items = contentArea.querySelectorAll(".carousel-item");
   const dotsContainer = contentArea.querySelector(".carousel-dots");
+  const prevArea = contentArea.querySelector(".carousel-prev");
+  const nextArea = contentArea.querySelector(".carousel-next");
   let currentIndex = 0;
   let startX = 0,
     currentX = 0,
@@ -31,7 +33,7 @@ export function initCarousel(elements, showPopup) {
   function adjustHeightSmoothly() {
     const currentHeight = contentArea.offsetHeight;
     contentArea.style.height = `${currentHeight}px`;
-    contentArea.offsetHeight;
+    contentArea.offsetHeight; // Force reflow
     contentArea.style.height = "auto";
     const newHeight = contentArea.scrollHeight;
     contentArea.style.height = `${currentHeight}px`;
@@ -42,6 +44,8 @@ export function initCarousel(elements, showPopup) {
       contentArea.style.height = "auto";
     }, 300);
   }
+
+  track.style.display = "block"; // Show the carousel after setup
 
   images.forEach((image) => {
     if (image.complete) {
@@ -59,50 +63,74 @@ export function initCarousel(elements, showPopup) {
     }
   });
 
-  function updateCarousel() {
-    items.forEach((item) => item.classList.remove("active"));
-    items[currentIndex].classList.add("active");
-    const dots = contentArea.querySelectorAll(".carousel-dot");
-    dots.forEach((dot) => dot.classList.remove("active"));
-    dots[currentIndex].classList.add("active");
-    const containerWidth = contentArea.querySelector(
-      ".carousel-container"
-    ).offsetWidth;
-    const offset = -currentIndex * containerWidth;
-    track.style.transform = `translateX(${offset}px)`;
+  // Apply 3D transformations to items based on virtualIndex
+  function updateTransformations(virtualIndex) {
+    const perspective = 16; // Perspective value in pixels
+    items.forEach((item, i) => {
+      const distance = i - virtualIndex;
+      const translateX = 120 * distance; // Horizontal shift in pixels
+      const scale = Math.max(1 - 0.2 * Math.abs(distance), 0); // Scale down based on distance
+      const rotateY = distance > 0 ? -1 : distance < 0 ? 1 : 0; // Slight rotation
+      const zIndex = -Math.floor(Math.abs(distance)); // Stack order
+      const filter = Math.abs(distance) > 2 ? "blur(5px)" : "none"; // Blur distant items
+      const opacity = Math.abs(distance) > 2 ? 0 : 0.9; // Fade distant items
+
+      item.style.transform = `translate(-50%, -50%) translateX(${translateX}px) scale(${scale}) perspective(${perspective}px) rotateY(${rotateY}deg)`;
+      item.style.zIndex = zIndex;
+      item.style.filter = filter;
+      item.style.opacity = opacity;
+    });
   }
 
+  // Update carousel state (active item and dots)
+  function updateCarousel() {
+    items.forEach((item, i) => {
+      if (i === currentIndex) {
+        item.classList.add("active");
+      } else {
+        item.classList.remove("active");
+      }
+    });
+    const dots = contentArea.querySelectorAll(".carousel-dot");
+    dots.forEach((dot, i) => {
+      if (i === currentIndex) {
+        dot.classList.add("active");
+      } else {
+        dot.classList.remove("active");
+      }
+    });
+    updateTransformations(currentIndex);
+  }
+
+  // Touch start handler
   function handleStart(e) {
     if (e.type === "touchstart") {
-      isDragging = false; // Reset for touch events
+      isDragging = false;
       startX = e.touches[0].pageX;
       currentX = startX;
       track.style.transition = "none";
     }
   }
 
+  // Touch move handler for swipe
   function handleMove(e) {
     if (e.type === "touchmove") {
       currentX = e.touches[0].pageX;
       const diff = currentX - startX;
-      const containerWidth = contentArea.querySelector(
-        ".carousel-container"
-      ).offsetWidth;
-      const currentOffset = -currentIndex * containerWidth;
       if (Math.abs(diff) > 10) {
         isDragging = true;
-        e.preventDefault(); // Prevent vertical scrolling during swipe
-        requestAnimationFrame(() => {
-          track.style.transform = `translateX(${currentOffset + diff}px)`;
-        });
+        e.preventDefault();
+        const virtualIndex = currentIndex - diff / 120; // Adjust sensitivity with divisor
+        updateTransformations(virtualIndex);
       }
     }
   }
 
+  // Touch end handler for swipe or tap
   function handleEnd(e) {
     if (e.type === "touchend") {
       if (!isDragging) {
-        // Treat as a tap on mobile
+        // Handle tap
         const tappedItem = e.target.closest(".carousel-item");
         if (tappedItem) {
           currentIndex = parseInt(tappedItem.getAttribute("data-index"));
@@ -110,31 +138,23 @@ export function initCarousel(elements, showPopup) {
           showPopup(tappedItem);
         }
       } else {
-        // Handle swipe completion on mobile
-        track.style.transition = "transform 0.5s ease";
+        // Handle swipe completion
         const diff = currentX - startX;
-        const containerWidth = contentArea.querySelector(
-          ".carousel-container"
-        ).offsetWidth;
-        if (Math.abs(diff) > containerWidth / 4) {
-          if (diff < 0 && currentIndex < items.length - 1) {
-            currentIndex++;
-          } else if (diff > 0 && currentIndex > 0) {
-            currentIndex--;
-          }
-        }
+        const virtualIndex = currentIndex - diff / 100;
+        currentIndex = Math.round(virtualIndex);
+        if (currentIndex < 0) currentIndex = 0;
+        if (currentIndex > items.length - 1) currentIndex = items.length - 1;
         updateCarousel();
       }
-      isDragging = false; // Reset after interaction
     }
   }
 
-  // Bind only touch events for swiping
+  // Bind touch events for swiping
   track.addEventListener("touchstart", handleStart);
   track.addEventListener("touchmove", handleMove, { passive: false });
   track.addEventListener("touchend", handleEnd);
 
-  // Handle item clicks (for desktop and mobile fallback)
+  // Handle item clicks (desktop and mobile fallback)
   items.forEach((item) => {
     item.addEventListener("click", (e) => {
       e.preventDefault();
@@ -152,5 +172,24 @@ export function initCarousel(elements, showPopup) {
     });
   });
 
+  // Handle invisible navigation regions
+  if (prevArea) {
+    prevArea.addEventListener("click", () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCarousel();
+      }
+    });
+  }
+  if (nextArea) {
+    nextArea.addEventListener("click", () => {
+      if (currentIndex < items.length - 1) {
+        currentIndex++;
+        updateCarousel();
+      }
+    });
+  }
+
+  // Initialize carousel
   updateCarousel();
 }
