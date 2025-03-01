@@ -73,36 +73,29 @@ export function initCarousel(elements, showPopup) {
   }
 
   function handleStart(e) {
-    isDragging = false; // Reset initially
-    startX = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
-    currentX = startX;
-    track.style.transition = "none";
-    if (e.type === "mousedown") {
-      isDragging = true; // Only set for mouse if button is pressed
+    if (e.type === "touchstart") {
+      isDragging = false; // Reset for touch events
+      startX = e.touches[0].pageX;
+      currentX = startX;
+      track.style.transition = "none";
     }
   }
 
   function handleMove(e) {
-    if (!isDragging) return;
-    currentX = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
-    const diff = currentX - startX;
-    const containerWidth = contentArea.querySelector(
-      ".carousel-container"
-    ).offsetWidth;
-    const currentOffset = -currentIndex * containerWidth;
-
-    // Apply threshold for touch devices only
-    if (e.type.includes("touch") && Math.abs(diff) > 10) {
-      isDragging = true;
-      e.preventDefault(); // Prevent scrolling on touch devices during swipe
-      requestAnimationFrame(() => {
-        track.style.transform = `translateX(${currentOffset + diff}px)`;
-      });
-    } else if (e.type === "mousemove") {
-      // Only move if initiated by mousedown
-      requestAnimationFrame(() => {
-        track.style.transform = `translateX(${currentOffset + diff}px)`;
-      });
+    if (e.type === "touchmove") {
+      currentX = e.touches[0].pageX;
+      const diff = currentX - startX;
+      const containerWidth = contentArea.querySelector(
+        ".carousel-container"
+      ).offsetWidth;
+      const currentOffset = -currentIndex * containerWidth;
+      if (Math.abs(diff) > 10) {
+        isDragging = true;
+        e.preventDefault(); // Prevent vertical scrolling during swipe
+        requestAnimationFrame(() => {
+          track.style.transform = `translateX(${currentOffset + diff}px)`;
+        });
+      }
     }
   }
 
@@ -132,38 +125,18 @@ export function initCarousel(elements, showPopup) {
         }
         updateCarousel();
       }
-    } else if (e.type === "mouseup" && isDragging) {
-      // Handle mouse drag completion on desktop
-      track.style.transition = "transform 0.5s ease";
-      const diff = currentX - startX;
-      const containerWidth = contentArea.querySelector(
-        ".carousel-container"
-      ).offsetWidth;
-      if (Math.abs(diff) > containerWidth / 4) {
-        if (diff < 0 && currentIndex < items.length - 1) {
-          currentIndex++;
-        } else if (diff > 0 && currentIndex > 0) {
-          currentIndex--;
-        }
-      }
-      updateCarousel();
+      isDragging = false; // Reset after interaction
     }
-    isDragging = false; // Reset after every interaction
   }
 
-  // Bind touch/mouse events for swiping
+  // Bind only touch events for swiping
   track.addEventListener("touchstart", handleStart);
   track.addEventListener("touchmove", handleMove, { passive: false });
   track.addEventListener("touchend", handleEnd);
-  track.addEventListener("mousedown", handleStart);
-  track.addEventListener("mousemove", handleMove);
-  track.addEventListener("mouseup", handleEnd);
-  track.addEventListener("mouseleave", handleEnd);
 
-  // Handle item clicks or taps (for desktop and fallback)
+  // Handle item clicks (for desktop and mobile fallback)
   items.forEach((item) => {
     item.addEventListener("click", (e) => {
-      if (isDragging) return;
       e.preventDefault();
       currentIndex = parseInt(item.getAttribute("data-index"));
       updateCarousel();
