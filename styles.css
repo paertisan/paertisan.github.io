@@ -33,7 +33,7 @@ body {
     grid-area: logo;
     place-self: center;
     flex-shrink: 0;
-    transition: transform 0.3s ease; /* Smooth sliding */
+    transition: transform 0.3s ease;
     position: relative;
 }
 
@@ -62,14 +62,11 @@ body {
     min-height: 0;
     width: 100%;
     height: 0;
+    overflow: hidden;
 }
 
 .content-area--exit {
     opacity: 0;
-}
-
-.content-area--enter {
-    animation: fadeIn 0.3s ease forwards;
 }
 
 .content-area--enter {
@@ -116,16 +113,14 @@ body {
     justify-self: center;
 }
 
-/* Hover and active states for Vol. 0 */
 .vol0:hover,
 .vol0-active {
     color: #ffd700;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Desktop hover behavior for Vol. 0 */
 body:has(.vol0:hover) nav a {
-    color: #f9f8f7;
+    color: #ffffff;
 }
 body:has(.vol0:hover) .logo-img {
     filter: brightness(0) invert(1);
@@ -134,9 +129,8 @@ body:has(.vol0:hover) {
     background-color: #333;
 }
 
-/* Mobile click and desktop popup behavior */
 body.vol0-active nav a {
-    color: #f9f8f7;
+    color: #ffffff;
 }
 body.vol0-active .logo-img {
     filter: brightness(0) invert(1);
@@ -152,7 +146,7 @@ nav {
     grid-area: nav;
     align-self: center;
     width: 100%;
-    transition: transform 0.3s ease; /* Smooth sliding */
+    transition: transform 0.3s ease;
     position: relative;
 }
 
@@ -203,7 +197,7 @@ nav a:active {
 }
 
 .popup-content {
-    background-color: #f9f8f7;
+    background-color: #fff;
     padding-inline: clamp(20px, 5vw, 100px);
     padding-block: clamp(20px, 5vw, 50px);
     border-radius: 10px;
@@ -221,6 +215,13 @@ nav a:active {
     color: #333;
     font-size: clamp(18px, 3vw, 24px);
     margin-bottom: 20px;
+}
+
+.popup-content iframe {
+  max-width: 100%;
+  width: clamp(250px, 80%, 560px);
+  height: auto;
+  aspect-ratio: 16 / 9;
 }
 
 .album-cover {
@@ -244,7 +245,7 @@ nav a:active {
 }
 
 .album-link-box:hover {
-    background-color: #f9f8f7;
+    background-color: #f0f0e9;
 }
 
 .popup-content a {
@@ -310,7 +311,73 @@ nav a:active {
     vertical-align: middle;
 }
 
-/* Adjust media queries as needed */
+/* Music Carousel Styles */
+.music-carousel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+.carousel-container {
+    width: 100%;
+    max-width: 300px;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: 100%;
+}
+
+.carousel-item {
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+}
+
+.carousel-image {
+    width: 100%;
+    max-width: 250px;
+    border-radius: 10px;
+    height: auto;
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+}
+
+.carousel-item.active .carousel-image {
+    filter: none;
+    transform: scale(1.05);
+}
+
+.carousel-item:hover:not(.active) .carousel-image {
+    filter: blur(1px);
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px; /* Space from images */
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.carousel-dot.active {
+    background-color: #333; /* Matches your active color */
+}
+
+/* Media Queries */
 @media (max-width: 768px) {
     .website {
         grid-template-areas: 
@@ -319,7 +386,6 @@ nav a:active {
             "nav";
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto;
-        row-gap: 50px;
     }
     .logo {
         padding-bottom: 0;
@@ -337,10 +403,26 @@ nav a:active {
     .text-body {
         padding: 0 1rem;
     }
+    .content-area {
+        padding-block: 40px;
+    }
+    .carousel-container {
+        max-width: 80%;
+    }
+    .carousel-image {
+        max-width: 200px;
+    }
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+    }
 }
 
-/* Tablet and small desktops (769px to 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
+    .website {
+        grid-template-columns: auto auto 1fr;
+        max-width: 900px;
+    }
     .logo-img {
         width: 300px;
     }
@@ -359,7 +441,6 @@ nav a:active {
     }
 }
 
-/* Desktops (1025px and above) */
 @media (min-width: 1025px) {
     .website {
         max-width: 1400px;
