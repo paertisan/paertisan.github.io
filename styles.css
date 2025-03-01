@@ -318,6 +318,7 @@ nav a:active {
     align-items: center;
     width: 100%;
     position: relative;
+    scroll-snap-type: x mandatory;
 }
 
 .carousel-container {
@@ -338,6 +339,7 @@ nav a:active {
     justify-content: center;
     align-items: center;
     background: transparent;
+    scroll-snap-align: start;
 }
 
 .carousel-image {
