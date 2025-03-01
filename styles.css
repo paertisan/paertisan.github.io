@@ -327,7 +327,8 @@ nav a:active {
 
 .carousel-track {
     display: flex;
-    transition: transform 0.5s ease;
+    transition: transform 0.5s ease-out; /* Matches JS easing */
+    will-change: transform; /* Optimizes performance */
     width: 100%;
 }
 

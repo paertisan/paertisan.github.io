@@ -8,6 +8,9 @@ export function initCarousel(elements, showPopup) {
   let startX = 0,
     currentX = 0,
     isDragging = false;
+  let startTime = 0,
+    lastX = 0,
+    velocity = 0;
 
   if (!track || !items.length || !dotsContainer) {
     console.warn("Carousel elements not found");
@@ -29,32 +32,20 @@ export function initCarousel(elements, showPopup) {
   let loadedImages = 0;
 
   function adjustHeightSmoothly() {
-    // Step 1: Capture the current height
     const currentHeight = contentArea.offsetHeight;
-
-    // Step 2: Set the starting height explicitly
     contentArea.style.height = `${currentHeight}px`;
-
-    // Force a reflow to ensure the height is applied
-    contentArea.offsetHeight; // Prevents timing issues
-
-    // Step 3: Temporarily set to auto to calculate the new height
+    contentArea.offsetHeight;
     contentArea.style.height = "auto";
     const newHeight = contentArea.scrollHeight;
-
-    // Step 4: Reset to current height, then animate to new height
     contentArea.style.height = `${currentHeight}px`;
     requestAnimationFrame(() => {
       contentArea.style.height = `${newHeight}px`;
     });
-
-    // Step 5: After transition, set back to auto
     setTimeout(() => {
       contentArea.style.height = "auto";
-    }, 300); // Matches a 0.3s transition duration
+    }, 300);
   }
 
-  // Handle image loading
   images.forEach((image) => {
     if (image.complete) {
       loadedImages++;
@@ -87,7 +78,10 @@ export function initCarousel(elements, showPopup) {
   function handleStart(e) {
     isDragging = true;
     startX = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
+    lastX = startX;
+    startTime = performance.now();
     track.style.transition = "none";
+    e.preventDefault(); // Prevent page scrolling
   }
 
   function handleMove(e) {
@@ -98,30 +92,60 @@ export function initCarousel(elements, showPopup) {
       ".carousel-container"
     ).offsetWidth;
     const currentOffset = -currentIndex * containerWidth;
-    track.style.transform = `translateX(${currentOffset + diff}px)`;
+
+    // Update velocity (pixels per millisecond)
+    const timeDelta = performance.now() - startTime;
+    if (timeDelta > 0) {
+      velocity = (currentX - lastX) / timeDelta;
+    }
+    lastX = currentX;
+    startTime = performance.now();
+
+    requestAnimationFrame(() => {
+      track.style.transform = `translateX(${currentOffset + diff}px)`;
+    });
+    e.preventDefault(); // Prevent page scrolling
   }
 
-  function handleEnd() {
+  function handleEnd(e) {
     if (!isDragging) return;
     isDragging = false;
-    track.style.transition = "transform 0.5s ease";
+    track.style.transition = "transform 0.5s ease-out"; // Easing for momentum
     const diff = currentX - startX;
     const containerWidth = contentArea.querySelector(
       ".carousel-container"
     ).offsetWidth;
-    if (Math.abs(diff) > containerWidth / 4) {
+    const swipeThreshold =
+      Math.abs(velocity) > 0.5 ? containerWidth / 8 : containerWidth / 4; // Velocity-based threshold
+
+    if (Math.abs(diff) > swipeThreshold) {
       if (diff < 0 && currentIndex < items.length - 1) {
         currentIndex++;
       } else if (diff > 0 && currentIndex > 0) {
         currentIndex--;
       }
+    } else {
+      // Apply momentum based on velocity
+      const momentum = velocity * 200; // Adjust multiplier for feel
+      const newOffset = -currentIndex * containerWidth + momentum;
+      const maxOffset = 0;
+      const minOffset = -(items.length - 1) * containerWidth;
+
+      if (newOffset > maxOffset) {
+        currentIndex = 0;
+      } else if (newOffset < minOffset) {
+        currentIndex = items.length - 1;
+      } else {
+        currentIndex = Math.round(-newOffset / containerWidth);
+      }
     }
     updateCarousel();
+    e.preventDefault(); // Prevent page scrolling
   }
 
   // Bind touch/mouse events for swiping
-  track.addEventListener("touchstart", handleStart);
-  track.addEventListener("touchmove", handleMove);
+  track.addEventListener("touchstart", handleStart, { passive: false });
+  track.addEventListener("touchmove", handleMove, { passive: false });
   track.addEventListener("touchend", handleEnd);
   track.addEventListener("mousedown", handleStart);
   track.addEventListener("mousemove", handleMove);
