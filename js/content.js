@@ -11,13 +11,8 @@ export const pages = {
   `,
   "#about": `
     <div class="content-about text-body">
-      <p>My name is <span class="highlight">Robert Rust</span>.</p>
-      <p>I was born in Springfield, Oregon, and I love music. I'm drawn to 
-      <span class="highlight">beautiful</span> sounds that wear their structures on their sleeves.
-      I'm a <span class="highlight">composer</span> and <span class="highlight">pianist</span>. 
-      I'm a 7th generation <span class="highlight">Oregonian</span>. I'm a Christian. 
-      I love the <span class="highlight">Word</span>, and even more: I love to share it with people through my 
-      <span class="highlight">music</span>.</p>
+      <p><span class="highlight">Robert W. Rust</span> is a composer. His journey began quietly in a home without music.
+      A transformative encounter with <span class="highlight">The Word</span>—The Divine Logos—ignited his artistic mission: <span class="highlight">to translate the sacred into sound.</span></p>
     </div>
   `,
   "#music": `
