@@ -104,38 +104,13 @@ export function initPopup(elements) {
         </div>
       `;
     } else if (type === "video") {
-      const youtubeId = item.getAttribute("data-youtube-id");
-      popupTitle.textContent = `${title} - Video`;
+      popupTitle.textContent = `Video: ${title}`;
+      popupTitle.style.width = '400px';
       popupBody.innerHTML = `
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/${youtubeId}?autoplay=0" 
-          title="${title} Video" frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen></iframe>
+        <div style="text-align: center">
+          <iframe src="https://www.youtube.com/embed/${item.getAttribute('data-youtube-id')}" width="2400" height="1350" frameborder="0" allowfullscreen style="max-width: 100%;"></iframe>
+        </div>
       `;
-      // Store a reference to the iframe for later use
-      const iframe = popupBody.querySelector("iframe");
-      // Add an event listener to pause the video when the popup is closed
-      const pauseVideoOnClose = () => {
-        if (iframe) {
-          iframe.contentWindow.postMessage(
-            '{"event":"command","func":"pauseVideo","args":""}',
-            "*"
-          );
-        }
-      };
-      // Attach the pause logic to the close button
-      closePopup.addEventListener("click", pauseVideoOnClose);
-      // Also pause video on outside click or Escape key (handled in eventListeners.js)
-      popup.addEventListener("click", (e) => {
-        if (e.target === popup) {
-          pauseVideoOnClose();
-        }
-      });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && popup.classList.contains("show")) {
-          pauseVideoOnClose();
-        }
-      });
     }
 
     popup.style.display = "flex";
