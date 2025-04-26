@@ -11,6 +11,13 @@ export function bindEventListeners(
   navLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
+
+      // Remove 'active' class from all nav links
+      navLinks.forEach(navLink => navLink.classList.remove('active'));
+
+      // Add 'active' class to the clicked link
+      link.classList.add('active');
+
       const href = link.getAttribute("href");
       updateContent(href, elements, state, isMobile);
     });

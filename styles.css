@@ -129,7 +129,8 @@ nav a {
     padding: 10px 0;
 }
 
-nav a:hover {
+nav a:hover,
+nav a.active {
     font-variation-settings: 'opsz' 6, 'wght' 900;
 }
 
