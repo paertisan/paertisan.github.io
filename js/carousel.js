@@ -9,7 +9,8 @@ export function initCarousel(elements, showPopup) {
   let currentIndex = 0;
   let startX = 0,
     currentX = 0,
-    isDragging = false;
+    isDragging = false,
+    dragThreshold = 15;
 
   if (!track || !items.length || !dotsContainer) {
     console.warn("Carousel elements not found");
@@ -105,10 +106,11 @@ export function initCarousel(elements, showPopup) {
   // Touch start handler
   function handleStart(e) {
     if (e.type === "touchstart") {
-      isDragging = false;
+      isDragging = false; // Reset dragging flag
       startX = e.touches[0].pageX;
       currentX = startX;
-      track.style.transition = "none";
+      // Remove transition during swipe for responsiveness
+      items.forEach((item) => (item.style.transition = "none"));
     }
   }
 
@@ -117,9 +119,13 @@ export function initCarousel(elements, showPopup) {
     if (e.type === "touchmove") {
       currentX = e.touches[0].pageX;
       const diff = currentX - startX;
-      if (Math.abs(diff) > 10) {
+      // Start dragging only if movement exceeds threshold
+      if (!isDragging && Math.abs(diff) > dragThreshold) {
         isDragging = true;
-        e.preventDefault();
+      }
+
+      if (isDragging) {
+        e.preventDefault(); // Prevent page scroll while swiping carousel
         const virtualIndex = currentIndex - diff / 120; // Adjust sensitivity with divisor
         updateTransformations(virtualIndex);
       }
@@ -129,6 +135,12 @@ export function initCarousel(elements, showPopup) {
   // Touch end handler for swipe or tap
   function handleEnd(e) {
     if (e.type === "touchend") {
+      // Add transition back for smooth snapping
+      items.forEach((item) =>
+        (item.style.transition =
+          "transform 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out")
+      );
+
       if (!isDragging) {
         // Handle tap
         const tappedItem = e.target.closest(".carousel-item");
@@ -146,6 +158,9 @@ export function initCarousel(elements, showPopup) {
         if (currentIndex > items.length - 1) currentIndex = items.length - 1;
         updateCarousel();
       }
+
+      // Reset isDragging after handling end event
+      isDragging = false;
     }
   }
 
