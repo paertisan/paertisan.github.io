@@ -145,6 +145,9 @@ export function initCarousel(elements, showPopup) {
         // Handle tap
         const tappedItem = e.target.closest(".carousel-item");
         if (tappedItem) {
+          // Prevent the browser from synthesizing a click event after this touchend
+          e.preventDefault();
+
           currentIndex = parseInt(tappedItem.getAttribute("data-index"));
           updateCarousel();
           showPopup(tappedItem);

@@ -96,11 +96,9 @@ export async function updateContent(
     initCarousel(elements, showPopup);
   }
 
+  // If the popup isn't showing, ensure the vol0-active class is removed from the body
   if (!popup.classList.contains("show")) {
     document.body.classList.remove("vol0-active");
-    if (isMobile()) {
-      // Removed call to updateThemeColor
-    }
   }
   updateTitle(hash); // Update browser title
 }
@@ -118,9 +116,4 @@ export function adjustLayout(elements, state, isMobile) {
     contentArea.style.height = "auto";
   }
   state.currentContentHeight = newContentHeight;
-
-  if (document.querySelector(".music-carousel")) {
-    const showPopup = initPopup(elements);
-    initCarousel(elements, showPopup);
-  }
 }

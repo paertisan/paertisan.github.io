@@ -2,17 +2,6 @@
 export function initPopup(elements) {
   const { popup, popupTitle, popupBody, closePopup } = elements;
 
-  // Function to pause the video
-  function pauseVideo() {
-    const iframe = popupBody.querySelector("iframe");
-    if (iframe) {
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"pauseVideo","args":""}',
-        "*"
-      );
-    }
-  }
-
   return function showPopup(item) {
     const type = item.getAttribute("data-type");
     const title = item.getAttribute("data-title");
