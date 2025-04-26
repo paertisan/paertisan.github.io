@@ -6,11 +6,12 @@ import { updateTitle } from "./utils.js";
 // Helper function to fetch content
 async function fetchContent(pageName) {
   try {
-    const response = await fetch(`/_content/${pageName}.html`);
+    // Use relative path instead of root-relative
+    const response = await fetch(`_content/${pageName}.html`);
     if (!response.ok) {
       console.error(`Failed to fetch content for ${pageName}. Status: ${response.status}`);
-      // Fallback to home page content on error
-      const fallbackResponse = await fetch('/_content/home.html');
+      // Fallback to home page content on error (also relative path)
+      const fallbackResponse = await fetch('_content/home.html');
       if (!fallbackResponse.ok) { 
         console.error('Failed to fetch fallback content (home.html)');
         return '<p>Error loading content.</p>'; // Final fallback
@@ -22,7 +23,8 @@ async function fetchContent(pageName) {
     console.error(`Error fetching content for ${pageName}:`, error);
      // Fallback to home page content on network error
     try {
-      const fallbackResponse = await fetch('/_content/home.html');
+      // Use relative path instead of root-relative
+      const fallbackResponse = await fetch('_content/home.html');
        if (!fallbackResponse.ok) { 
         console.error('Failed to fetch fallback content (home.html) after network error');
         return '<p>Error loading content.</p>'; // Final fallback
