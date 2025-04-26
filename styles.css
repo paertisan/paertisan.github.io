@@ -130,12 +130,7 @@ nav a {
 }
 
 nav a:hover {
-    transform: translateY(-4px);
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-nav a:active {
-    transform: scale(1.05);
+    font-variation-settings: 'opsz' 6, 'wght' 900;
 }
 
 /* Popup styles */
@@ -422,7 +417,7 @@ nav a:active {
             "logo nav content"
             "logo nav content"
             "logo nav content";
-        grid-template-columns: auto auto 1fr;
+        grid-template-columns: auto 0.5fr 1fr;
     }
 }
 
