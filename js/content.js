@@ -41,8 +41,7 @@ export async function updateContent(
   hash,
   elements,
   state,
-  isMobile,
-  updateThemeColor
+  isMobile
 ) {
   const { contentArea, logo, nav, popup } = elements;
   let pageName = hash.substring(1); // Remove '#' e.g., 'home', 'about'
@@ -100,7 +99,7 @@ export async function updateContent(
   if (!popup.classList.contains("show")) {
     document.body.classList.remove("vol0-active");
     if (isMobile()) {
-      updateThemeColor("#f9f8f7");
+      // Removed call to updateThemeColor
     }
   }
   updateTitle(hash); // Update browser title

@@ -1,6 +1,6 @@
 // js/main.js
 import { updateContent, adjustLayout } from "./content.js";
-import { isMobile, updateThemeColor } from "./utils.js";
+import { isMobile, updateTitle } from "./utils.js";
 import { bindEventListeners } from "./eventListeners.js";
 import { initCarousel } from "./carousel.js";
 import { initPopup } from "./popup.js";
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   (async () => {
     // Initial content load by calling updateContent
     const initialHash = window.location.hash || "#home";
-    await updateContent(initialHash, elements, state, isMobile, updateThemeColor); // Await the async content load
+    await updateContent(initialHash.substring(1) || 'home', elements, state, isMobile);
 
     // Bind event listeners
     bindEventListeners(
@@ -33,7 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
       updateContent,
       adjustLayout,
       isMobile,
-      updateThemeColor
+      initCarousel,
+      initPopup
     );
 
     // Adjust layout and initialize carousel if needed
@@ -43,10 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
       initCarousel(elements, showPopup);
     }
 
-    if (isMobile()) {
-      updateThemeColor("#f9f8f7");
-    }
-  })(); // Immediately invoke the async function
+    // Update title based on initial hash
+    updateTitle(initialHash.substring(1) || 'home');
+  })();
 });
 
 // Preload carousel images
