@@ -3,62 +3,39 @@ import { initCarousel } from "./carousel.js";
 import { initPopup } from "./popup.js";
 import { updateTitle } from "./utils.js";
 
-export const pages = {
-  "#home": `
-    <div class="block-quote">
-      <i>The <span class="highlight">Word</span> is my <span class="highlight">music</span></i>
-    </div>
-  `,
-  "#about": `
-    <div class="content-about text-body">
-      <p><span class="highlight">Robert W. Rust</span> is a composer. His journey began quietly in a home without music.
-      A transformative encounter with <span class="highlight">The Word</span>—The Divine Logos—ignited his artistic mission: <span class="highlight">to translate the sacred into sound.</span></p>
-    </div>
-  `,
-  "#music": `
-    <div class="music-carousel">
-      <div class="carousel-container">
-        <div class="carousel-prev"></div>
-        <div class="carousel-track">
-          <a href="#" class="carousel-item active" data-index="0" data-title="Vol. 0" data-type="album" data-asset="/assets/vol0-cover.png" data-spotify="https://open.spotify.com/album/0WfLbvhHHCECRfAMwyAjzD" data-applemusic="https://music.apple.com/us/album/vol-0/1790153891" data-youtubemusic="https://music.youtube.com/playlist?list=OLAK5uy_k5R_yKTcS0hHuu4Rkb29F_l1sn80Eplso" data-amazonmusic="https://music.amazon.com/albums/B0DSVVSLHM" data-tidal="https://listen.tidal.com/album/411252419">
-            <img src="/assets/vol0-cover.png" alt="Vol. 0 Album Cover" class="carousel-image">
-          </a>
-          <a href="#" class="carousel-item" data-index="1" data-title="By the Rivers of Babylon" data-youtube-id="POOuNTrZLFs" data-type="video">
-            <img src="/assets/rivers-of-bblon-cover.png" alt="By the Rivers of Babylon Album Cover" class="carousel-image">
-          </a>
-          <a href="#" class="carousel-item" data-index="2" data-title="Things Seen and Not Seen" data-youtube-id="XDFWQK8Jpy8" data-type="video">
-            <img src="/assets/tsns-cover.png" alt="Things Seen and Not Seen Album Cover" class="carousel-image">
-          </a>
-          <a href="#" class="carousel-item" data-index="3" data-title="Will You..." data-youtube-id="oyePz-J7spw" data-type="video">
-            <img src="/assets/willyou-cover.png" alt="Will You... Album Cover" class="carousel-image">
-          </a>
-        </div>
-        <div class="carousel-next"></div>
-      </div>
-      <div class="carousel-dots"></div>
-    </div>
-  `,
-  "#contact": `
-    <div class="contact-section">
-      <h2><i>If you want to get in touch, DM me on 𝕏, or send me an email!</i></h2>
-      <p>info [at] rwrmusic [dot] com</p>
-      <div class="contact-icons">
-        <a href="https://x.com/rwalterrust" target="_blank" rel="noopener noreferrer" class="contact-link" aria-label="Follow on X">
-          <svg viewBox="0 0 24 24" width="32" height="32" class="contact-icon">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="currentColor"></path>
-          </svg>
-        </a>
-        <a href="mailto:info@rwrmusic.com" class="contact-link" aria-label="Email info@rwrmusic.com">
-          <svg viewBox="0 0 24 24" width="32" height="32" class="contact-icon">
-            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"></path>
-          </svg>
-        </a>
-      </div>
-    </div>
-  `,
-};
+// Helper function to fetch content
+async function fetchContent(pageName) {
+  try {
+    const response = await fetch(`/_content/${pageName}.html`);
+    if (!response.ok) {
+      console.error(`Failed to fetch content for ${pageName}. Status: ${response.status}`);
+      // Fallback to home page content on error
+      const fallbackResponse = await fetch('/_content/home.html');
+      if (!fallbackResponse.ok) { 
+        console.error('Failed to fetch fallback content (home.html)');
+        return '<p>Error loading content.</p>'; // Final fallback
+      }
+      return await fallbackResponse.text();
+    }
+    return await response.text();
+  } catch (error) {
+    console.error(`Error fetching content for ${pageName}:`, error);
+     // Fallback to home page content on network error
+    try {
+      const fallbackResponse = await fetch('/_content/home.html');
+       if (!fallbackResponse.ok) { 
+        console.error('Failed to fetch fallback content (home.html) after network error');
+        return '<p>Error loading content.</p>'; // Final fallback
+      }
+      return await fallbackResponse.text();
+    } catch (fallbackError) {
+       console.error('Error fetching fallback content:', fallbackError);
+       return '<p>Error loading content.</p>'; // Final fallback
+    }
+  }
+}
 
-export function updateContent(
+export async function updateContent(
   hash,
   elements,
   state,
@@ -66,47 +43,65 @@ export function updateContent(
   updateThemeColor
 ) {
   const { contentArea, logo, nav, popup } = elements;
-  if (!pages[hash]) {
-    console.warn(`Hash ${hash} not found, defaulting to #home`);
-    hash = "#home";
+  let pageName = hash.substring(1); // Remove '#' e.g., 'home', 'about'
+
+  // Default to 'home' if hash is empty or invalid (basic check)
+  if (!pageName || !['home', 'about', 'music', 'contact'].includes(pageName)) {
+     console.warn(`Invalid hash '${hash}', defaulting to #home`);
+     pageName = 'home';
+     hash = '#home'; // Ensure hash variable is also updated for title logic etc.
   }
 
+  // Fetching content triggers the exit animation
   contentArea.classList.add("content-area--exit");
 
+  // Wait for the exit animation to roughly complete AND content to fetch
+  const contentPromise = fetchContent(pageName);
+  const timeoutPromise = new Promise(resolve => setTimeout(resolve, 300));
+
+  const newContent = await contentPromise;
+  await timeoutPromise; // Ensure minimum delay for animation
+
+  // Inject fetched content
+  contentArea.innerHTML = newContent;
+  contentArea.style.height = "auto";
+  const newContentHeight = contentArea.scrollHeight;
+  
+  // Set initial height for transition effect, or use current if available
+  const startHeight = state.currentContentHeight > 0 ? state.currentContentHeight : newContentHeight;
+  contentArea.style.height = `${startHeight}px`;
+  
+  contentArea.offsetHeight; // Force reflow
+  
+  // Animate to new height
+  contentArea.style.height = `${newContentHeight}px`;
+  state.currentContentHeight = newContentHeight;
+
+  logo.style.transform = "none";
+  nav.style.transform = "none";
+  contentArea.classList.remove("content-area--exit");
+  contentArea.classList.add("content-area--enter");
+
   setTimeout(() => {
-    contentArea.innerHTML = pages[hash];
-    contentArea.style.height = "auto";
-    const newContentHeight = contentArea.scrollHeight;
-    contentArea.style.height = `${state.currentContentHeight}px`;
-    contentArea.offsetHeight; // Force reflow
-    contentArea.style.height = `${newContentHeight}px`;
-    state.currentContentHeight = newContentHeight;
-
-    logo.style.transform = "none";
-    nav.style.transform = "none";
-    contentArea.classList.remove("content-area--exit");
-    contentArea.classList.add("content-area--enter");
-
-    setTimeout(() => {
-      contentArea.classList.remove("content-area--enter");
-      if (!isMobile()) {
-        contentArea.style.height = "auto";
-      }
-    }, 300);
-
-    if (hash === "#music") {
-      const showPopup = initPopup(elements);
-      initCarousel(elements, showPopup);
+    contentArea.classList.remove("content-area--enter");
+    if (!isMobile()) {
+      contentArea.style.height = "auto";
     }
-
-    if (!popup.classList.contains("show")) {
-      document.body.classList.remove("vol0-active");
-      if (isMobile()) {
-        updateThemeColor("#f9f8f7");
-      }
-    }
-    updateTitle(hash);
   }, 300);
+
+  // Initialize components specific to the loaded content
+  if (hash === "#music") {
+    const showPopup = initPopup(elements);
+    initCarousel(elements, showPopup);
+  }
+
+  if (!popup.classList.contains("show")) {
+    document.body.classList.remove("vol0-active");
+    if (isMobile()) {
+      updateThemeColor("#f9f8f7");
+    }
+  }
+  updateTitle(hash); // Update browser title
 }
 
 export function adjustLayout(elements, state, isMobile) {
