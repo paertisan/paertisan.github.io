@@ -7,11 +7,11 @@ import { updateTitle } from "./utils.js";
 async function fetchContent(pageName) {
   try {
     // Use relative path instead of root-relative
-    const response = await fetch(`_content/${pageName}.html`);
+    const response = await fetch(`partials/${pageName}.html`);
     if (!response.ok) {
       console.error(`Failed to fetch content for ${pageName}. Status: ${response.status}`);
       // Fallback to home page content on error (also relative path)
-      const fallbackResponse = await fetch('_content/home.html');
+      const fallbackResponse = await fetch('partials/home.html');
       if (!fallbackResponse.ok) { 
         console.error('Failed to fetch fallback content (home.html)');
         return '<p>Error loading content.</p>'; // Final fallback
@@ -24,7 +24,7 @@ async function fetchContent(pageName) {
      // Fallback to home page content on network error
     try {
       // Use relative path instead of root-relative
-      const fallbackResponse = await fetch('_content/home.html');
+      const fallbackResponse = await fetch('partials/home.html');
        if (!fallbackResponse.ok) { 
         console.error('Failed to fetch fallback content (home.html) after network error');
         return '<p>Error loading content.</p>'; // Final fallback
